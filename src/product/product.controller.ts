@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from "@nestjs/common";
-import { ProductService } from "./product.service";
-import { Product } from "./product.model";
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { ProductService } from './product.service';
+import { Product } from './product.model';
 
 @Controller('product')
 export class ProductController {
