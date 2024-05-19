@@ -4,5 +4,6 @@ export interface ApplicationConfiguration {
   appDescription: string;
   environment: string;
   port: number;
+  appGlobalPrefix: string;
   swaggerEndpoint: string;
 }

@@ -4,20 +4,25 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import { ProductModule } from "./product/product.module";
 import { CommonModule } from "./common/common.module";
-import { InfluxdbService } from "./common/influxdb/service/influxdb.service";
 import { ConfigurationModule } from './configuration/configuration.module';
+import { UserModule } from './user/user.module';
+import { InfluxdbModule } from "./common/influxdb/influxdb.module";
 
 @Module({
   imports: [
+    ConfigurationModule,
     AuthModule,
     ProductModule,
     CommonModule,
-    ConfigurationModule,
+    UserModule,
+    InfluxdbModule
   ],
-  controllers: [AppController],
+  controllers: [
+    AppController
+  ],
   providers: [
     AppService,
-    InfluxdbService]
+  ]
 })
 export class AppModule {
 }

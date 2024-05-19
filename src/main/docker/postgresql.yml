@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  ensens-postgresql:
+    image: postgres:14.5
+    environment:
+      - POSTGRES_USER=ensens
+      - POSTGRES_PASSWORD=ensens
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 127.0.0.1:5434:5432
+    volumes:
+      - ./init-db/:/docker-entrypoint-initdb.d
