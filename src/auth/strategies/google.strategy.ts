@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { GoogleAuthenticationConfiguration } from "../../configuration/model/google-authentication-configuration";
 import { ConfigKey } from "../../configuration/model/config-keys";
 import { AuthService } from "../auth.service";
+import { UserDetails } from "../model/user-details";
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
@@ -23,10 +24,10 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
-    return {
+  async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<UserDetails> {
+    return new UserDetails({
       email: profile.emails[0].value,
       name: `${profile.name.givenName} ${profile.name.familyName}`,
-    };
+    });
   }
 }
