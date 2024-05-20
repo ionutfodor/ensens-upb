@@ -18,16 +18,9 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(GoogleOauthGuard)
   async googleRedirectCallback(@Req() req: Request, @Res() res: Response): Promise<any> {
-    console.log("CALLBACK");
-    console.log(req.user);
-    const token = await this.authService.signIn(req.user);
+    const user = req.user;
+    const accessToken = await this.authService.signIn(user);
 
-    res.cookie('access_token', token, {
-      maxAge: 34560000,
-      sameSite: true,
-      secure: false,
-    });
-
-    return res.status(HttpStatus.OK);
+    return res.status(HttpStatus.OK).json({ accessToken });
   }
 }

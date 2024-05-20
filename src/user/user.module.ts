@@ -11,7 +11,7 @@ import { PostgresConfigProvider } from "./database-config/postgres-config.provid
         type: 'postgres',
         ...postgresConfigProvider.getConfig(),
         entities: [User],
-        synchronise: true
+        synchronize: false
       }),
       inject: [PostgresConfigProvider],
       extraProviders: [PostgresConfigProvider],

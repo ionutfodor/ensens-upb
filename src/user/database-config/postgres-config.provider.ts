@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { DatabaseConfiguration } from "../../configuration/model/database-configuration";
 import { ConfigKey } from "../../configuration/model/config-keys";
 
-Injectable()
+@Injectable()
 export class PostgresConfigProvider {
 
   constructor(

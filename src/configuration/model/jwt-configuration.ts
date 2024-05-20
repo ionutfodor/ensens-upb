@@ -1,4 +1,4 @@
 export interface JwtConfiguration {
-  jwtValidity: number;
-  jwtSecret: string;
+  secret: string;
+  expiresIn: string;
 }

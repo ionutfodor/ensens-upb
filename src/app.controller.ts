@@ -1,7 +1,8 @@
-import { Controller, Get, Header } from "@nestjs/common";
+import { Controller, Get, Header, UseGuards } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { InfluxdbService } from "./common/influxdb/service/influxdb.service";
 import { ApiResponse } from "@nestjs/swagger";
+import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 
 @Controller()
 export class AppController {
@@ -29,6 +30,7 @@ export class AppController {
   }
 
   @ApiResponse({ status: 200, description: 'A list of all measurements in the database'})
+  @UseGuards(JwtAuthGuard)
   @Get('measurements')
   async getMeasurements(): Promise<string[]> {
     // TODO

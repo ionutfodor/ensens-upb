@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserService } from "../user/service/user.service";
 import { JwtService } from "@nestjs/jwt";
-import { User } from "../user/entity/user";
 import { UserDetails } from "./model/user-details";
+import { User } from "../user/entity/user";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,6 @@ export class AuthService {
   }
 
   async signIn(userDetails: UserDetails): Promise<string> {
-    console.log(userDetails);
     if (!userDetails) {
       throw new BadRequestException('Unauthenticated');
     }
@@ -22,7 +21,7 @@ export class AuthService {
     let user = await this.userService.findUserByEmail(userDetails.email);
 
     if (!user) {
-      user = await this.userService.createNewUser(user);
+      user = await this.userService.createNewUser(userDetails as User);
     } else {
       //TODO update user
     }
