@@ -4,7 +4,6 @@ import { Profile, Strategy } from "passport-google-oauth20";
 import { ConfigService } from "@nestjs/config";
 import { GoogleAuthenticationConfiguration } from "../../configuration/model/google-authentication-configuration";
 import { ConfigKey } from "../../configuration/model/config-keys";
-import { AuthService } from "../auth.service";
 import { UserDetails } from "../model/user-details";
 
 @Injectable()
@@ -12,7 +11,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService,
-    @Inject(AuthService) private readonly authService: AuthService,
     ) {
     const googleAuthenticationConfiguration =
       configService.get<GoogleAuthenticationConfiguration>(ConfigKey.GoogleAuthentication);
