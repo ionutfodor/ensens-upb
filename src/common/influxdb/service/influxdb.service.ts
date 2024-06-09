@@ -3,7 +3,7 @@ import { InfluxDB } from "influx";
 import { InfluxdbConfigProvider } from "../database-config/influxdb-config.provider";
 import { Tag } from "../model/tag";
 import { Field } from "../model/field";
-import { SearchDTOUtil } from "../util/searchDTO-util";
+import { QueryBuilderUtil } from "../util/query-builder-util";
 
 @Injectable()
 export class InfluxdbService {
@@ -28,13 +28,13 @@ export class InfluxdbService {
 
   async getTagsForMeasurement(measurement: string): Promise<Tag[]> {
     const measurements = await this.getMeasurements();
-    SearchDTOUtil.validateMeasurement(measurement, measurements);
+    QueryBuilderUtil.validateMeasurement(measurement, measurements);
     return await this.getTagKeys(measurement);
   }
 
   async getFieldsForMeasurement(measurement: string): Promise<Field[]> {
     const measurements = await this.getMeasurements();
-    SearchDTOUtil.validateMeasurement(measurement, measurements);
+    QueryBuilderUtil.validateMeasurement(measurement, measurements);
     return await this.getFieldKeys(measurement);
   }
 
