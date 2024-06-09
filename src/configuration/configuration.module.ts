@@ -6,11 +6,14 @@ import { PostgresDatabaseConfig, InfluxDatabaseConfig } from "./namespaces/datab
 import { GoogleAuthenticationConfig } from "./namespaces/google-authentication-configs";
 import { JwtConfig } from "./namespaces/jwt-configs";
 
+const environment = process.env.NODE_ENV || 'development';
+const envFilePath = `.env.${environment}`;
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.development',
+      envFilePath: envFilePath,
       load: [
         AppConfig,
         InfluxDatabaseConfig,
