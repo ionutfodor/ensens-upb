@@ -1,9 +1,21 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, Post, UseGuards, ValidationPipe } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  UseGuards,
+  ValidationPipe
+} from "@nestjs/common";
 import { InfluxdbService } from "./common/influxdb/service/influxdb.service";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { InfluxQueryBuilderService } from "./common/influxdb/service/influx-query-builder.service";
 import { SearchDTO } from "./common/dto/searchDTO";
+import { Tag } from "./common/influxdb/model/tag";
+import { Field } from "./common/influxdb/model/field";
 
 @Controller()
 export class AppController {
@@ -26,6 +38,50 @@ export class AppController {
   }
 
   @ApiTags('InfluxDB interface')
+  @ApiOperation({ description: 'Retrieve a list of all tags in a specific measurement' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'All tags in a measurement as an array of Tag[]' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 400, description: 'Measurement [...] does not exist in the database!' })
+  @ApiParam({
+    name: 'measurement',
+    required: true,
+    description: 'The measurement name',
+    example: "lora.tts.elsys.ers-eye01"
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get(':measurement/tags')
+  async getTags(@Param('measurement') measurement: string): Promise<Tag[]> {
+    try {
+      return await this.influxdbService.getTagsForMeasurement(measurement);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @ApiTags('InfluxDB interface')
+  @ApiOperation({ description: 'Retrieve a list of all fields in a specific measurement' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: 200, description: 'All tags in a measurement as an array of Field[]' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 400, description: 'Measurement [...] does not exist in the database!' })
+  @ApiParam({
+    name: 'measurement',
+    required: true,
+    description: 'The measurement name',
+    example: "lora.tts.elsys.ers-eye01"
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get(':measurement/fields')
+  async getFields(@Param('measurement') measurement: string): Promise<Field[]> {
+    try {
+      return await this.influxdbService.getFieldsForMeasurement(measurement);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @ApiTags('InfluxDB interface')
   @ApiOperation({ description: 'Retrieve data as JSON based on search criteria in the SearchDTO sent in the body of the request' })
   @ApiBearerAuth()
   @ApiResponse({ status: 200, description: 'Data requested' })
@@ -45,7 +101,6 @@ export class AppController {
   @HttpCode(200)
   async getData(@Body(new ValidationPipe({ transform: true })) searchDTO: SearchDTO): Promise<string> {
     try {
-      // return await this.influxQueryBuilderService.buildQuery(searchDTO);
       const query = await this.influxQueryBuilderService.buildQuery(searchDTO);
       return await this.influxdbService.queryData(query);
     } catch (error) {

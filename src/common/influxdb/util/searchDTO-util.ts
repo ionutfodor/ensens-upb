@@ -18,14 +18,18 @@ import { DateType } from "./date-type.enum";
 
 export class SearchDTOUtil {
 
-  public static validateMeasurement(searchDTO: SearchDTO, measurements: string[]): void {
+  public static validateSearchDTOMeasurement(searchDTO: SearchDTO, measurements: string[]): void {
     if (!searchDTO.measurement) {
       throw new BadRequestException("Measurement not specified!");
     }
 
-    if (!measurements.includes(searchDTO.measurement)) {
+    this.validateMeasurement(searchDTO.measurement, measurements);
+  }
+
+  public static validateMeasurement(measurement: string, measurements: string[]): void {
+    if (!measurements.includes(measurement)) {
       throw new NotFoundException(
-        `Measurement ${searchDTO.measurement} does not exist in the database!`);
+        `Measurement ${measurement} does not exist in the database!`);
     }
   }
 
