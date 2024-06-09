@@ -2,18 +2,17 @@ import { Inject, Injectable } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
-import { UserService } from "../../user/service/user.service";
 import { JwtConfiguration } from "../../configuration/model/jwt-configuration";
 import { ConfigKey } from "../../configuration/model/config-keys";
 import { JwtPayload } from "../model/jwt-payload";
+import { UserDetails } from "../model/user-details";
 
 Injectable();
 export class JwtStrategy extends PassportStrategy(Strategy) {
 
 
   constructor(
-    @Inject(ConfigService) private readonly configService: ConfigService,
-    @Inject(UserService) private readonly userService: UserService
+    @Inject(ConfigService) private readonly configService: ConfigService
   ) {
     const jwtConfiguration =
       configService.get<JwtConfiguration>(ConfigKey.JWT);
@@ -24,7 +23,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
-    return { userName: payload.sub, email: payload.email };
+  async validate(payload: JwtPayload): Promise<UserDetails> {
+    return new UserDetails({
+      name: payload.sub,
+      email: payload.email
+    });
   }
 }

@@ -21,10 +21,6 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   @Get('measurements')
   async getMeasurements(): Promise<string[]> {
-    // TODO
-    const result: any = await this.influxdbService.queryData('show measurements');
-    console.log(result);
-    console.log(await this.influxdbService.getMeasurements());
     return await this.influxdbService.getMeasurements();
   }
 
