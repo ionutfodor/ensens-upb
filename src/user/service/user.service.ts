@@ -20,4 +20,16 @@ export class UserService {
     const newUser = this.userRepository.create(userData);
     return this.userRepository.save(newUser);
   }
+
+  async updateExistingUser(userData: Partial<User>, user: User): Promise<User> {
+    // For now, only update the name of the user, as the id is auto-generated and the e-mail is unique
+    if (userData.name !== user.name) {
+      console.debug(`Updating name for user with email: ${user.email}`);
+      user.name = userData.name;
+      return this.userRepository.save(user);
+    }
+
+    console.debug(`Data for user with email: ${user.email} is the same, no need for updating`);
+    return user;
+  }
 }

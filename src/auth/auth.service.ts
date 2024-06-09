@@ -23,7 +23,7 @@ export class AuthService {
     if (!user) {
       user = await this.userService.createNewUser(userDetails as User);
     } else {
-      //TODO update user
+      user = await this.userService.updateExistingUser(userDetails as User, user);
     }
 
     return this.generateJwt({

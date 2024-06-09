@@ -61,7 +61,7 @@ export class InfluxQueryBuilderService {
     }
     // endregion
 
-    console.log(query);
+    console.debug(query);
     return query;
   }
 
