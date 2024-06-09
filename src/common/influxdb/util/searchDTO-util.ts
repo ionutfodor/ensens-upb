@@ -13,7 +13,8 @@ import {
   FilterOperation
 } from "../../enum/filter-operation";
 import { DateUtil } from "./date-util";
-import { AllowedTimeOperators } from "../../enum/operator-enum";
+import { AllowedTimeOperators, OperatorEnum } from "../../enum/operator-enum";
+import { DateType } from "./date-type.enum";
 
 export class SearchDTOUtil {
 
@@ -74,15 +75,22 @@ export class SearchDTOUtil {
 
   public static buildFiltersQuery(filters: FilterDTO[], fields: Field[], tags: Tag[]): string {
     let filtersQuery = "WHERE ";
-    let addedFilter= false;
+    let previousOperator: OperatorEnum | null = null;
+    let addedTimeFilter = false;
+    let parenthesisOpen = false;
 
     filters.forEach(filter => {
-      if (filter.filterField === 'time') {
+      if (filter.filterField === "time") {
         return;
       }
 
       const existingField = fields.find(field => field.fieldKey === filter.filterField);
       const existingTag = tags.find(tag => tag.tagKey === filter.filterField);
+
+      if (filter.operatorEnum === OperatorEnum.OR && !parenthesisOpen) {
+        filtersQuery += "( ";
+        parenthesisOpen = true;
+      }
 
       let filterValue: any;
       if (existingField) {
@@ -93,9 +101,8 @@ export class SearchDTOUtil {
               console.warn(`Ignoring invalid filter value for: ${filter.filterField}. Required float`);
               return;
             }
-            addedFilter ? filtersQuery += `${filter.operatorEnum} ` : null;
             filtersQuery += `"${filter.filterField}" ${this.resolveFilterOperation(filter.filterOperation)} ${filterValue} `;
-            addedFilter = true;
+            previousOperator = filter.operatorEnum;
             break;
           case FieldTypes.INTEGER:
             filterValue = parseInt(filter.filterValue);
@@ -103,9 +110,8 @@ export class SearchDTOUtil {
               console.warn(`Ignoring invalid filter value for: ${filter.filterField}. Required integer`);
               return;
             }
-            addedFilter ? filtersQuery += `${filter.operatorEnum} ` : null;
             filtersQuery += `"${filter.filterField}" ${this.resolveFilterOperation(filter.filterOperation)} ${filterValue} `;
-            addedFilter = true;
+            previousOperator = filter.operatorEnum;
             break;
           case FieldTypes.BOOLEAN:
             if (filter.filterValue !== 'true' && filter.filterValue !== 'false') {
@@ -116,18 +122,16 @@ export class SearchDTOUtil {
               console.warn(`Ignoring invalid filter operation for: ${filter.filterField}. Required EQ or NOT`);
               return;
             }
-            addedFilter ? filtersQuery += `${filter.operatorEnum} ` : null;
             filtersQuery += `"${filter.filterField}" ${this.resolveFilterOperation(filter.filterOperation)} ${filter.filterValue} `;
-            addedFilter = true;
+            previousOperator = filter.operatorEnum;
             break;
           case FieldTypes.STRING:
             if (!AllowedStringOperations.includes(filter.filterOperation)) {
               console.warn(`Ignoring invalid filter operation for: ${filter.filterField}. Required EQ or NOT`);
               return;
             }
-            addedFilter ? filtersQuery += `${filter.operatorEnum} ` : null;
             filtersQuery += `"${filter.filterField}" ${this.resolveFilterOperation(filter.filterOperation)} '${filter.filterValue}' `;
-            addedFilter = true;
+            previousOperator = filter.operatorEnum;
             break;
         }
       } else if (existingTag) {
@@ -135,24 +139,31 @@ export class SearchDTOUtil {
           console.warn(`Ignoring invalid filter operation for: ${filter.filterField}. Required EQ or NOT`);
           return;
         }
-        addedFilter ? filtersQuery += `${filter.operatorEnum} ` : null;
         filtersQuery += `"${filter.filterField}" ${this.resolveFilterOperation(filter.filterOperation)} '${filter.filterValue}' `;
-        addedFilter = true;
+        previousOperator = filter.operatorEnum;
       } else {
         console.warn(`No such tag or field: ${filter.filterField}`);
         return;
       }
+
+      if (filter.operatorEnum === OperatorEnum.AND && parenthesisOpen) {
+        filtersQuery += ") ";
+        parenthesisOpen = false;
+      }
+
+      filtersQuery += `${filter.operatorEnum} `;
     });
 
     filters.filter(filter => filter.filterField === 'time')
       .forEach(filter => {
-        if (!DateUtil.isValidISODateTime(filter.filterValue)) {
+        const dateType = DateUtil.getDateType(filter.filterValue);
+        if (dateType === null) {
           console.warn(`Ignoring invalid date filter with value ${filter.filterValue}`);
           return;
         }
 
-        if (!AllowedTimeOperators.includes(filter.operatorEnum)) {
-          console.warn(`Ignoring invalid date filter operator ${filter.operatorEnum}`);
+        if (addedTimeFilter && !AllowedTimeOperators.includes(previousOperator)) {
+          console.warn(`Ignoring invalid date filter operator ${previousOperator}`);
           return;
         }
 
@@ -161,12 +172,20 @@ export class SearchDTOUtil {
           return;
         }
 
-        addedFilter ? filtersQuery += `${filter.operatorEnum} ` : null;
-        filtersQuery += `time ${this.resolveFilterOperation(filter.filterOperation)} '${filter.filterValue}' `;
-        addedFilter = true;
+        const dateQueryValue = dateType === DateType.ISO_DATE ? `'${filter.filterValue}'` : `${filter.filterValue}`;
+        filtersQuery += `time ${this.resolveFilterOperation(filter.filterOperation)} ${dateQueryValue} `;
+        if (parenthesisOpen) {
+          filtersQuery += ") ";
+          parenthesisOpen = false;
+        }
+        filtersQuery += `${filter.operatorEnum} `;
+        addedTimeFilter = true;
+        previousOperator = filter.operatorEnum;
     });
 
-    if (!addedFilter) {
+    filtersQuery = this.cleanUpFiltersQuery(filtersQuery, parenthesisOpen);
+
+    if (filtersQuery === "WHERE ") {
       console.warn(`Filters defined but no valid filters present!`);
       return "";
     }
@@ -189,5 +208,23 @@ export class SearchDTOUtil {
       case FilterOperation.LTE:
         return "<=";
     }
+  }
+
+  private static cleanUpFiltersQuery(filtersQuery: string, parenthesisOpen: boolean): string {
+    if (filtersQuery.endsWith("AND ")) {
+      filtersQuery = filtersQuery.slice(0, -4);
+    }
+    if (filtersQuery.endsWith("OR ")) {
+      filtersQuery = filtersQuery.slice(0, -3);
+    }
+
+    if (parenthesisOpen) {
+      filtersQuery += ") ";
+    }
+    if (filtersQuery.endsWith("( ) ")) {
+      filtersQuery = filtersQuery.slice(0, -4);
+    }
+
+    return filtersQuery;
   }
 }
