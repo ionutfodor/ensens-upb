@@ -21,6 +21,7 @@ async function bootstrap(): Promise<void> {
     .setDescription(applicationConfig.appDescription)
     .setVersion(applicationConfig.appVersion)
     .addServer(`http://localhost:${applicationConfig.port}/`, 'Local environment')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
     extraModels: [SearchDTO, SorterDTO, PaginationDTO, FilterDTO]
