@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InfluxdbService } from "./influxdb.service";
 import { SearchDTO } from "../../dto/searchDTO";
-import { SearchDTOUtil } from "../util/searchDTO-util";
+import { QueryBuilderUtil } from "../util/query-builder-util";
 
 @Injectable()
 export class InfluxQueryBuilderService {
@@ -13,7 +13,7 @@ export class InfluxQueryBuilderService {
 
     // region measurement
     const measurements = await this.influxdbService.getMeasurements();
-    SearchDTOUtil.validateSearchDTOMeasurement(searchDTO, measurements);
+    QueryBuilderUtil.validateSearchDTOMeasurement(searchDTO, measurements);
     const measurement = searchDTO.measurement;
     // endregion
 
@@ -25,8 +25,8 @@ export class InfluxQueryBuilderService {
     if (!searchDTO.projections || searchDTO.projections.length === 0) {
       query += `* `;
     } else {
-      const queryProjections = SearchDTOUtil.validateProjections(searchDTO.projections, fields, tags);
-      SearchDTOUtil.validateQueryProjections(queryProjections);
+      const queryProjections = QueryBuilderUtil.validateProjections(searchDTO.projections, fields, tags);
+      QueryBuilderUtil.validateQueryProjections(queryProjections);
       query += queryProjections.join(",");
       query += " ";
     }
@@ -36,13 +36,13 @@ export class InfluxQueryBuilderService {
     // region filters
     if (searchDTO.filters && searchDTO.filters.length > 0) {
       const filters = searchDTO.filters;
-      query += SearchDTOUtil.buildFiltersQuery(filters, fields, tags);
+      query += QueryBuilderUtil.buildFiltersQuery(filters, fields, tags);
     }
     // endregion
 
     // region sorters
     if (searchDTO.sorter) {
-      SearchDTOUtil.validateSorter(searchDTO.sorter);
+      QueryBuilderUtil.validateSorter(searchDTO.sorter);
       query += `ORDER BY "time" ${searchDTO.sorter.sortDirection} `;
     }
     // endregion
@@ -50,7 +50,7 @@ export class InfluxQueryBuilderService {
     // region pagination
     if (searchDTO.pagination) {
       const paginationDTO = searchDTO.pagination;
-      SearchDTOUtil.validatePagination(paginationDTO);
+      QueryBuilderUtil.validatePagination(paginationDTO);
       if (paginationDTO.all === false) {
         query += `LIMIT ${paginationDTO.limit} `;
 

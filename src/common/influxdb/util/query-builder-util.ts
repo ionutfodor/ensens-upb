@@ -16,7 +16,7 @@ import { DateUtil } from "./date-util";
 import { AllowedTimeOperators, OperatorEnum } from "../../enum/operator-enum";
 import { DateType } from "./date-type.enum";
 
-export class SearchDTOUtil {
+export class QueryBuilderUtil {
 
   public static validateSearchDTOMeasurement(searchDTO: SearchDTO, measurements: string[]): void {
     if (!searchDTO.measurement) {
