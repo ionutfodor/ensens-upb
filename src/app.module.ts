@@ -1,10 +1,24 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { AuthModule } from "./auth/auth.module";
+import { CommonModule } from "./common/common.module";
+import { ConfigurationModule } from './configuration/configuration.module';
+import { UserModule } from './user/user.module';
+import { InfluxdbModule } from "./common/influxdb/influxdb.module";
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    ConfigurationModule,
+    AuthModule,
+    CommonModule,
+    UserModule,
+    InfluxdbModule
+  ],
+  controllers: [
+    AppController
+  ],
+  providers: [
+  ]
 })
-export class AppModule {}
+export class AppModule {
+}

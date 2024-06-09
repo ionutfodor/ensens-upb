@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  ensens-influxdb:
+#    restore is not working with 2.x version
+    image: influxdb:1.7
+    ports:
+      - 127.0.0.1:8086:8086
+    volumes:
+      - ensens-influxdb-data:/var/lib/influxdb2
+      - ensens-influxdb-config:/etc/influxdb2
+    environment:
+#      - db not needed, created at restore
+#      - INFLUXDB_DB=iot
+      - INFLUXDB_ADMIN_USER=iot_admin
+      - INFLUXDB_ADMIN_PASSWORD=iot_admin
+      - INFLUXDB_USER=iot
+      - INFLUXDB_USER_PASSWORD=iot
+
+volumes:
+  ensens-influxdb-data:
+  ensens-influxdb-config:
