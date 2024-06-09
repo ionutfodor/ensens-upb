@@ -13,7 +13,7 @@ export class InfluxQueryBuilderService {
 
     // region measurement
     const measurements = await this.influxdbService.getMeasurements();
-    SearchDTOUtil.validateMeasurement(searchDTO, measurements);
+    SearchDTOUtil.validateSearchDTOMeasurement(searchDTO, measurements);
     const measurement = searchDTO.measurement;
     // endregion
 
