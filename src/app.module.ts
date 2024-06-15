@@ -1,5 +1,4 @@
 import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
 import { AuthModule } from "./auth/auth.module";
 import { CommonModule } from "./common/common.module";
 import { ConfigurationModule } from './configuration/configuration.module';
@@ -13,9 +12,6 @@ import { InfluxdbModule } from "./common/influxdb/influxdb.module";
     CommonModule,
     UserModule,
     InfluxdbModule
-  ],
-  controllers: [
-    AppController
   ],
   providers: [
   ]
