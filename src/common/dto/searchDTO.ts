@@ -2,7 +2,7 @@ import { PaginationDTO } from "./paginationDTO";
 import { SorterDTO } from "./sorterDTO";
 import { FilterDTO } from "./filterDTO";
 import { Type } from "class-transformer";
-import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsDefined, IsOptional, IsString, ValidateNested } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class SearchDTO {
@@ -10,6 +10,7 @@ export class SearchDTO {
     example: 'lora.tts.smartparking.sp4',
     required: true
   })
+  @IsDefined()
   @IsString()
   measurement: string;
 
