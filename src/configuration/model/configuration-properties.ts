@@ -113,9 +113,8 @@ export class EnvironmentVariables {
 
   //    JWT CONFIG
   @IsDefined()
-  @IsString()
-  @MinLength(1)
-  JWT_VALIDITY: string;
+  @IsNumber()
+  JWT_VALIDITY: number;
 
   @IsDefined()
   @IsString()
