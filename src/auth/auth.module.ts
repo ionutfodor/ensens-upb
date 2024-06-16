@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
-import { AuthService } from "./auth.service";
+import { AuthService } from "./service/auth.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { User } from "../user/entity/user";
 import { JwtModule } from "@nestjs/jwt";
 import { UserModule } from "../user/user.module";
-import { AuthController } from "./auth.controller";
+import { AuthController } from "./controller/auth.controller";
 import { GoogleStrategy } from "./strategies/google.strategy";
 import { JwtConfigProvider } from "./jwt-config/jwt-config.provider";
 import { JwtStrategy } from "./strategies/jwt.strategy";
