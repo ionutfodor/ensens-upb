@@ -10,7 +10,6 @@ import { UserDetails } from "../model/user-details";
 Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 
-
   constructor(
     @Inject(ConfigService) private readonly configService: ConfigService
   ) {
