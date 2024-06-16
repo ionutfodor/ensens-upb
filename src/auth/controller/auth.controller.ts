@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Req, Res, UseGuards } from "@nestjs/common";
-import { AuthService } from "./auth.service";
+import { AuthService } from "../service/auth.service";
 import { Request, Response } from "express";
-import { GoogleOauthGuard } from "./guards/google-oauth.guard";
+import { GoogleOauthGuard } from "../guards/google-oauth.guard";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @Controller('auth')

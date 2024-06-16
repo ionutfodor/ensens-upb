@@ -9,13 +9,13 @@ import {
   UseGuards,
   ValidationPipe
 } from "@nestjs/common";
-import { InfluxdbService } from "./service/influxdb.service";
-import { InfluxQueryBuilderService } from "./service/influx-query-builder.service";
+import { InfluxdbService } from "../service/influxdb.service";
+import { InfluxQueryBuilderService } from "../service/influx-query-builder.service";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
-import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
-import { Tag } from "./model/tag";
-import { Field } from "./model/field";
-import { SearchDTO } from "../dto/searchDTO";
+import { JwtAuthGuard } from "../../../auth/guards/jwt-auth.guard";
+import { Tag } from "../model/tag";
+import { Field } from "../model/field";
+import { SearchDTO } from "../../dto/searchDTO";
 
 @Controller()
 export class InfluxdbController {
