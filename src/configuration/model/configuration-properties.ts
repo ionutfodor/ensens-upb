@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsDefined, IsEnum, IsNumber, IsString, MinLength } from "class-validator";
+import { IsDefined, IsEnum, IsNumber, IsString, MinLength } from "class-validator";
 
 export enum Environment {
   development = 'development',
