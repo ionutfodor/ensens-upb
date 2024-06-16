@@ -10,10 +10,6 @@ import { InfluxdbController } from "./controller/influxdb.controller";
     InfluxdbService,
     InfluxQueryBuilderService
   ],
-  exports: [
-    InfluxdbService,
-    InfluxQueryBuilderService
-  ],
   controllers: [
     InfluxdbController
   ]

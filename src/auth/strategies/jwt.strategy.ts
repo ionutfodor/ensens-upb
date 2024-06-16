@@ -7,7 +7,7 @@ import { ConfigKey } from "../../configuration/model/config-keys";
 import { JwtPayload } from "../model/jwt-payload";
 import { UserDetails } from "../model/user-details";
 
-Injectable();
+Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
 
 
